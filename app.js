@@ -13,6 +13,11 @@ const express = require('express');
 // Creem el servidor
 const app = express();
 
+//npm install cors i requerim cors. Això farà q la API sigui accessible desde qualsevol origen.  
+const cors = require("cors");
+
+app.use(cors());
+
 // Això serveix per fer "operatives" les dades JSON que rebem en el body. Sense això, no podem llegir res del body.
 app.use(express.json());
 
@@ -81,5 +86,10 @@ app.post('/notes', (req, res) => {
   }
 });
 
+
+
+app.use((req,res) => res.status(404)) //middleware per cobrir les peticions a rutes inexistents
+
 // Li diem que el servidor corri en el port 3000.
-app.listen(3000, () => console.log('server running on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('server running'));
