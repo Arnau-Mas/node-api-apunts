@@ -78,7 +78,6 @@ app.post('/notes', (req, res) => {
     res.json(newNote); // això es fa perquè quan un post ha anat bé, se li retorna l'objecte perquè així el del frontend pugui utilitzar-lo.
   } else {
     req.status(400).end();
-    error:'No s\'ha pogut crear la nota';
   }
 });
 
