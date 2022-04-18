@@ -22,7 +22,9 @@
   "homepage": "https://github.com/Arnau-Mas/node-api#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "4.17.3"
+    "dotenv": "^16.0.0",
+    "express": "4.17.3",
+    "mongoose": "^6.3.0"
   },
   "devDependencies": {
     "eslint": "^8.13.0",

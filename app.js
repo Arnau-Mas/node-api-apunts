@@ -9,19 +9,30 @@
 //  Requerim el mòdul express per poder crear un servidor
 
 const express = require('express');
-
-
+const mongoose = require("mongoose");
+require('dotenv').config()
+const{URI} = process.env;
 
 // Creem el servidor
 const app = express();
 
 //npm install cors i requerim cors. Això farà q la API sigui accessible desde qualsevol origen.  
 const cors = require("cors");
-
+console.log(URI)
 app.use(cors());
 
 // Això serveix per fer "operatives" les dades JSON que rebem en el body. Sense això, no podem llegir res del body.
 app.use(express.json());
+
+async function main(){
+  await mongoose.connect(URI)
+}
+try{
+  main()
+  console.log("connectat a la base de dades");
+}catch(err){
+  console.log(err);
+}
 
 let notes = [
   {
