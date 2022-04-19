@@ -27,6 +27,7 @@ app.use(express.json());
 async function main(){
   await mongoose.connect(URI)
 }
+
 try{
   main()
   console.log("connectat a la base de dades");
