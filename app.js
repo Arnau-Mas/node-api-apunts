@@ -7,33 +7,28 @@
 
 
 //  Requerim el mòdul express per poder crear un servidor
-
-const express = require('express');
-const mongoose = require("mongoose");
-require('dotenv').config()
-const{URI} = process.env;
-
-// Creem el servidor
-const app = express();
-
-//npm install cors i requerim cors. Això farà q la API sigui accessible desde qualsevol origen.  
-const cors = require("cors");
-console.log(URI)
-app.use(cors());
-
-// Això serveix per fer "operatives" les dades JSON que rebem en el body. Sense això, no podem llegir res del body.
-app.use(express.json());
-
-async function main(){
-  await mongoose.connect(URI)
-}
-
+const main = require("./database.js");
 try{
   main()
   console.log("connectat a la base de dades");
 }catch(err){
   console.log(err);
 }
+const express = require('express');
+const mongoose = require("mongoose");
+const Note = require("./models/Note");
+
+
+// Creem el servidor
+const app = express();
+
+//npm install cors i requerim cors. Això farà q la API sigui accessible desde qualsevol origen.  
+const cors = require("cors");
+
+app.use(cors());
+
+// Això serveix per fer "operatives" les dades JSON que rebem en el body. Sense això, no podem llegir res del body.
+app.use(express.json());
 
 let notes = [
   {
@@ -61,8 +56,18 @@ app.get('/', (req, res)=>{
 });
 
 // Quan es faci un get a "/notes", retornem l'array de notes.
-app.get('/notes', (req, res)=>{
-  res.json(notes); // el res.json és per enviar al client un array o un objecte que estan en format json, i l'utilitzes x indicar-li el tipus de dada.
+app.get('/notes', async (req, res)=>{
+  try{
+    let notesDb = await Note.find();
+    if(notesDb){
+      res.json(notesDb)
+    }
+    console.log("fet")
+  }catch(err){
+    console.log(err)
+  }
+
+  // res.json(notes); el res.json és per enviar al client un array o un objecte que estan en format json, i l'utilitzes x indicar-li el tipus de dada.
 });
 
 // Utilitzem els : quan es tracta d'una ruta dinàmica. Ens servirà per mostrar les notes separades una a una.
