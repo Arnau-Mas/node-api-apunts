@@ -4,20 +4,19 @@
 //  3.npm i nodemon -D per instal·lar en fase de development el mòdul nodemon
 //  4.Configurar el package.json "dev":"nodemon app.js", "start":"node app.js"
 //  5.Crear app.js
-
+//Millor treballar amb promises pq async await estas convertit tot el controller en una promesa i a vegades pot crear eerrors a l'hora de retornar coses
 
 //  Requerim el mòdul express per poder crear un servidor
 const main = require("./database.js");
+const express = require('express');
+const mongoose = require("mongoose");
+const Note = require("./models/Note");
 try{
   main()
   console.log("connectat a la base de dades");
 }catch(err){
   console.log(err);
 }
-const express = require('express');
-const mongoose = require("mongoose");
-const Note = require("./models/Note");
-
 
 // Creem el servidor
 const app = express();
@@ -30,26 +29,8 @@ app.use(cors());
 // Això serveix per fer "operatives" les dades JSON que rebem en el body. Sense això, no podem llegir res del body.
 app.use(express.json());
 
-let notes = [
-  {
-    'id': 1,
-    'title': 'Title1',
-    'content': 'Content',
-  },
-  {
-    'id': 2,
-    'title': 'Title2',
-    'content': 'Content',
-  },
-  {
-    'id': 3,
-    'title': 'Title3',
-    'content': 'Content',
-  },
-];
-
 // Configurem les peticions als paths i què fer en cas del tipus de petició
-
+let notes = [];
 // Quan es faci un get a "/", retornar-li "Hola!";
 app.get('/', (req, res)=>{
   res.send('Hola!');
@@ -74,7 +55,7 @@ app.get('/notes', async (req, res)=>{
 app.get('/notes/:id', (req, res) => {
   const id = Number(req.params.id); // Aquesta és la manera d'obtenir el paràmetre dinàmic. Això és equivalent a -> const {id} = req.params;
   // req.params és un objecte que inclou tots els paràmetres afegits a la ruta de manera dinàmica
-  const note = notes.find((note) => note.id === id);
+  const note = Note.find((note) => note.id === id);
   if (note) {
     res.json(note);
   } else {
@@ -86,26 +67,34 @@ app.get('/notes/:id', (req, res) => {
 // Per veure si els deletes, posts, etc funcionen, utilitzem insomnia i alla configurem les requests per veure si les dades s'actualitzen o no
 app.delete('/notes/:id', (req, res) => {
   const id = req.params.id;
-  notes = notes.filter((note) => note.id != id);
+  notes = Note.filter((note) => note.id != id);
   res.send('it\'s deleted!');
 });
 
-app.post('/notes', (req, res) => {
-  const note = req.body;
-  if (!note) {
-    const newNote = {
-      id: 4,
-      title: note.title,
-      content: note.content,
-    };
-    notes = [...notes, newNote];
-    res.json(newNote); // això es fa perquè quan un post ha anat bé, se li retorna l'objecte perquè així el del frontend pugui utilitzar-lo.
+app.post('/notes', async (req, res) => {
+  const data = req.body;
+  if (data) {
+    const note = new Note({
+      title: data.title,
+      content: data.content,
+      date: new Date()
+    });
+    await note.save();
+    notes = [...notes, note];
+    res.json(note); // això es fa perquè quan un post ha anat bé, se li retorna l'objecte perquè així el del frontend pugui utilitzar-lo.
   } else {
     req.status(400).end();
   }
 });
 
-
+/* middleware per errors:
+SUPER IMPORTANT POSAR ELS MIDDLEWARES AQUESTS AL FINAL XQ NO INTERFEREIXIN AMB EL PROCÉS DE LECTURA DELS ALTRES MIDDLEWARES (de dalt a abaix)  
+als altres get, posts etc, quan fas un catch(err) (osigui, sempre q fas algo a la db)
+has de ficar next(err), per a que arribi al middleware de gestió d'errors i puguis tractar-lo 
+app.use((error, req, res, next) => {
+  if(error == X)
+})
+https://expressjs.com/es/guide/error-handling.html */
 
 app.use((req,res) => res.status(404)) //middleware per cobrir les peticions a rutes inexistents
 

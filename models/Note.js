@@ -10,3 +10,7 @@ const noteSchema = new Schema({
 const Note = model("Note", noteSchema);
 
 module.exports = Note;
+
+/* També es podria fer l'export així: 
+    module.exports = model("Note", noteSchema),
+*/
