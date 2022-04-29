@@ -21,7 +21,7 @@ try{
 // Creem el servidor
 const app = express();
 
-//npm install cors i requerim cors. Això farà q la API sigui accessible desde qualsevol origen.  
+//npm install cors i requerim cors. Això farà q la API sigui accessible desde qualsevol origen. Desde qualsevol IP.
 const cors = require("cors");
 
 app.use(cors());
