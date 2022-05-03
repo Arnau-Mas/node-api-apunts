@@ -1,9 +1,14 @@
 
 //  1.npm init -y per gobernar el projecte amb npm
+
 //  2.npm i express per instal·lar el mòdul d'express
+
 //  3.npm i nodemon -D per instal·lar en fase de development el mòdul nodemon
+
 //  4.Configurar el package.json "dev":"nodemon app.js", "start":"node app.js"
+
 //  5.Crear app.js
+
 //Millor treballar amb promises pq async await estas convertit tot el controller en una promesa i a vegades pot crear eerrors a l'hora de retornar coses
 
 //  Requerim el mòdul express per poder crear un servidor
